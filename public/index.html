@@ -1,0 +1,126 @@
+<!Doctype html>
+<html>
+
+<head>
+	<title>Testing</title>
+	<meta charset="utf-8">
+
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/smoothness/jquery-ui.css">
+
+
+</head>
+<style>
+	@font-face {
+		font-family: 'DiatypeMono';
+		src: url('./diatype_mono.ttf') format('truetype');
+	}
+
+	body {
+		font-size: 14.5px;
+		background: #f9f9f9;
+	}
+
+	::-webkit-scrollbar {
+		display: none;
+	}
+
+	.cm-editor.cm-focused {
+		outline: none !important;
+	}
+
+	/* Hide scrollbar for IE, Edge and Firefox */
+	.example {
+		-ms-overflow-style: none;
+		/* IE and Edge */
+		scrollbar-width: none;
+		/* Firefox */
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		font-family: 'DiatypeMono';
+		scrollbar-width: none;
+		/* Firefox */
+	}
+
+	.editor {
+		width: 95%;
+		overflow-y: scroll;
+		padding: 10px;
+	}
+
+	.group {
+		/* background: #ddd7; */
+		padding: 5px 0;
+		/* box-shadow: 0 0 7px 2px #0002; */
+	}
+
+	iframe {
+		border: none;
+	}
+
+	div.child {
+		margin: 10px;
+		border-left: 1px solid #ddd;
+		max-height: 87vh;
+		overflow-y: scroll;
+		padding-left: .5em;
+	}
+
+	span.fold {
+		cursor: pointer;
+		font-size: .7em;
+		padding: 0 1em;
+		margin: 0;
+	}
+
+	.container {
+		width: 100vw;
+		height: 100vh;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	input[type="text"] {
+		all: unset;
+		border-bottom: 1px solid #b4b4b4;
+	}
+
+	input[type="range"] {
+		-webkit-appearance: none;
+		/* Override default CSS styles */
+		appearance: none;
+		height: 2px;
+		background: black;
+
+		outline: none;
+		opacity: 0.7;
+		-webkit-transition: .2s;
+		transition: opacity .2s;
+	}
+
+	input[type="range"]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		/* Override default look */
+		appearance: none;
+		width: 25px;
+		height: 25px;
+		background: #4CAF50;
+		cursor: pointer;
+	}
+
+	input[type="range"]:hover {
+		opacity: 1;
+	}
+</style>
+
+<body>
+</body>
+
+</html>
+
+<script src="./pdfkit/pdfkit.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+<script type="module" src="./script.js"></script>

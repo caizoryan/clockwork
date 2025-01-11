@@ -1,0 +1,24 @@
+{
+  "name": "codemirro_bundle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/lang-markdown": "^6.2.5",
+    "@codemirror/language": "^6.10.2",
+    "@codemirror/view": "^6.29.1",
+    "@lezer/highlight": "^1.2.0",
+    "@replit/codemirror-vim": "^6.2.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "codemirror": "^6.0.1",
+    "eslint4b-prebuilt": "^6.7.2",
+    "rollup": "^4.20.0"
+  }
+}

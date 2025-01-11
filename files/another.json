@@ -1,0 +1,1 @@
+{"blocks":[{"type":"group","output":"console.log(\"hello world\")","blocks":[{"id":"in2sf","type":"default","code":"","active":false,"focus":false,"focused":false,"output":"console.log(\"hello world\")","cursor":23}],"fold":false,"focus":false}]}
