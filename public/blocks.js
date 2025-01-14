@@ -316,6 +316,7 @@ export function vector(e) {
 	}
 
 	let style = mem(() => `position: absolute; top: 40px; left: 0; width: ${size()}px; height: ${size()}px; background: ${recording() ? "red" : "#ccc"};`)
+	let ball = mem(() => `position: absolute; top: ${vect().y}px; left: ${vect().x}px; width: 10px; height: 10px; background: yellow;`)
 	let code = mem(() => `M["${name()}"] = { x: ${vect().x}, y: ${vect().y}, recorded: ${JSON.stringify(vect().recorded)} }`)
 
 	return {
@@ -324,7 +325,8 @@ export function vector(e) {
 				input [ type=text value=${name} oninput=${(e) => name.set(e.target.value)} ]
 				input [ type=range value=${size} oninput=${(e) => size.set(parseFloat(e.target.value))} min=0 max=500 step=1]
 				div [ class = widget style=${style} onmousemove=${onmousemove} onclick=${toggle_recording} ]
-					p -- ${code}`,
+					div [ class = widget style=${ball} onmousemove=${(e) => e.stopImmediatePropagation()} ]
+					p -- ${(() => `M.${name()}`)}`,
 		onselect: () => { },
 		onediting: () => { },
 		write: (el) => {
