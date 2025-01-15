@@ -2,7 +2,6 @@ import { render, html, mem, mut, eff_on, mounted, sig, h, For, each, store, prod
 import { batch, createStore } from "./solid_monke/mini-solid.js";
 import { make_code_mirror, vector, code_element, number_widget, render_editor } from "./blocks.js";
 import { EditorState, EditorView, basicSetup, javascript, keymap, esLint, lintGutter, linter, Linter, Compartment, syntaxHighlighting, HighlightStyle, t, Vim, vim } from "./codemirror/bundled.js"
-
 import {
 	autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap,
 	searchKeymap, highlightSelectionMatches,
@@ -743,7 +742,10 @@ export const dracula = createTheme({
 	styles: [
 		{
 			tag: t.comment,
-			color: '#787b8099',
+			color: "black",
+			padding: "2px",
+			borderRadius: "8px",
+			background: "#ffd2ed",
 		},
 		{
 			tag: t.string,
