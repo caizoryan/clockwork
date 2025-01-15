@@ -514,6 +514,46 @@ function add_input() {
 }
 
 function run_cmd(cmd) {
+	if (cmd == "switch") {
+		let e = editor_pos()
+		let f = frame_pos()
+
+		frame_pos.set(e)
+		editor_pos.set(f)
+	}
+
+	if (cmd == "reset") {
+		editor_pos.set({
+			x: 0,
+			y: 0,
+			w: 50,
+			h: 100,
+		})
+
+		frame_pos.set({
+			x: 50,
+			y: 0,
+			w: 50,
+			h: 100,
+		})
+	}
+
+	if (cmd == "preview") {
+		frame_pos.set({
+			x: 0,
+			y: 0,
+			w: 100,
+			h: 100
+		})
+
+		editor_pos.set({
+			x: 100,
+			y: 100,
+			w: 10,
+			h: 10
+		})
+	}
+
 	if (cmd == "w") {
 		trigger_save()
 	}
