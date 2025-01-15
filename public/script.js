@@ -25,7 +25,6 @@ if (m()?.name) {
 	localStorage.setItem("session_name", m()?.name)
 }
 
-
 let moodle = (function load() {
 	let name = session_name() ? session_name() : "model"
 	if (localStorage.getItem(name)) {
@@ -101,12 +100,42 @@ function eval_code(code) {
 	return eval(`"use strict";(${code})`);
 }
 
+let editor_pos = sig({
+	x: 0,
+	y: 0,
+	w: 50,
+	h: 100,
+})
+
+let frame_pos = sig({
+	x: 50,
+	y: 0,
+	w: 50,
+	h: 100,
+})
 
 let app = () => {
+	let editor_style = mem(() => `
+		position: fixed;
+		left: ${editor_pos().x}vw;
+		top: ${editor_pos().y}vh;
+		width: ${editor_pos().w}vw;
+		height: ${editor_pos().h}vh;
+	`)
+
+	let frame_style = mem(() => `
+		position: fixed;
+		left: ${frame_pos().x}vw;
+		top: ${frame_pos().y}vh;
+		width: ${frame_pos().w}vw;
+		height: ${frame_pos().h}vh;
+	`)
+
 	return h("div.container", [
 		// TODO: below is not reactive, have to wrap in a reactive context.. () => 
-		h("div.editor", init_editor(model.blocks)),
-		h("iframe", { srcdoc: compiled, width: "98%", height: "98%" })
+
+		h("div.editor", { style: editor_style }, init_editor(model.blocks)),
+		h("iframe", { style: frame_style, srcdoc: compiled, width: "98%", height: "98%" })
 	])
 }
 
