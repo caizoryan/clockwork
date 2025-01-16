@@ -163,34 +163,11 @@ export function code_element(element) {
 
 export function wave_tiles(element) {
 	let uid = Math.random().toString(36).substring(7)
-	let tiles = mut({
-		data: element.tiles ? element.tiles : [
-			{
-				src: "./tiles_vine/4.png",
-				sockets: ["101", "000", "000", "101"]
-			},
-
-			{
-				src: "./tiles_vine/5.png",
-				sockets: ["100", "001", "000", "000"]
-			},
-		]
-	})
 
 	let name = sig(element?.name || "raw_tiles_")
-	let source = sig(element.source || `
-			{
-				src: "./tiles_vine/4.png",
-				sockets: ["101", "000", "000", "101"]
-			},
+	let source = sig(element.source || ``)
 
-			{
-				src: "./tiles_vine/5.png",
-				sockets: ["100", "001", "000", "000"]
-			},
-		`)
-
-	let code = mem(() => `const ${name()} = [ ${source()} ]`)
+	let code = mem(() => `const ${name()} = ${source()}`)
 
 	let cursor = sig(element.cursor || 0)
 	let editor_showing = sig(element.editor_showing || true)
@@ -199,13 +176,12 @@ export function wave_tiles(element) {
 	let cursor_prev = () => cursor() > 0 ? cursor.set(cursor() - 1) : cursor.set(tiles.data.length - 1)
 
 
+
 	let editor_save, focus, editor
 
 	let toggle_editor = () => {
 		if (editor_showing()) { hide_editor() }
-
 		else { editor_showing.set(true); editor.focus() }
-
 	}
 
 	let hide_editor = () => {
@@ -220,9 +196,51 @@ export function wave_tiles(element) {
 		})()`
 
 		let tiles = eval_code(new_code)
-		console.log(tiles)
 		return tiles
 	}
+
+	let tiles = mut({ data: eval_tiles() })
+	let current = mem(() => tiles.data[cursor()])
+	const set_socket = (num, value) => {
+		tiles.data[cursor()].sockets[num] = value
+	}
+
+	let input = (x, y, index) => {
+		let style = `
+			position: absolute;
+			border: 1px solid black;
+			width: 50px;
+			height: 25px;
+			top: ${y}%;
+			left: ${x}%;
+		`
+
+		let el
+		let value = mem(() => tiles.data[cursor()]?.sockets[index])
+		let keydown = (e) => {
+			if (e.key == "Enter") {
+				console.log("whore", el.value)
+
+				set_socket(index, el.value.trim())
+
+				console.log("whore", tiles.data[cursor()].sockets[index])
+
+				setTimeout(() => {
+					console.log("whoring")
+					editor.dispatch({
+						changes: { from: 0, to: editor.state.doc.length, insert: JSON.stringify(tiles.data, null, 2) }
+					})
+				}, 50)
+			}
+		}
+
+		return html`input [onkeydown=${keydown} value=${value} ref=${(a) => el = a} style=${style}]`
+	}
+
+	let top_input = () => input(45, 0, 0)
+	let right_input = () => input(95, 45, 1)
+	let bottom_input = () => input(45, 95, 2)
+	let left_input = () => input(0, 45, 3)
 
 	// element will have an array of tile images
 	// structure
@@ -256,10 +274,14 @@ export function wave_tiles(element) {
 
 			let editor_style = mem(() => `height:${editor_showing() ? "auto" : "0px"}`)
 
-
 			return html`
-				div [style=${mem(() => `width:100%;position:relative`)}]
-					img [src=${(mem(() => tiles.data[cursor()]?.src))}]
+				div [style=${mem(() => `width:100%`)}]
+				  .tile [style=padding:50px;position:relative;width:min-content;]
+				    span -- ${top_input}
+				    span -- ${right_input}
+				    span -- ${bottom_input}
+				    span -- ${left_input}
+						img [src=${(mem(() => current()?.src))}]
 					button [onclick=${cursor_prev}] -- prev
 					button [onclick=${cursor_next}] -- next
 
@@ -276,7 +298,6 @@ export function wave_tiles(element) {
 			el.source = source()
 			el.output = code();
 			el.name = name();
-			el.tiles = tiles.data
 			el.editor_showing = editor_showing()
 		}
 	}
