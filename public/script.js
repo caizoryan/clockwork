@@ -1,7 +1,7 @@
 import { render, html, mem, mut, eff_on, mounted, sig, h, For, each, store, produce, when, eff, p } from "./solid_monke/solid_monke.js";
 import { batch, createStore } from "./solid_monke/mini-solid.js";
 
-import { make_code_mirror, vector, code_element, number_widget, render_editor } from "./blocks.js";
+import { make_code_mirror, vector, code_element, number_widget, render_editor, wave_tiles } from "./blocks.js";
 import {
 	EditorState, EditorView, basicSetup, javascript, keymap, esLint, lintGutter,
 	linter, Linter, Compartment, syntaxHighlighting, HighlightStyle, t, Vim, vim,
@@ -109,7 +109,7 @@ function return_renderer(str) {
 	else { throw new Error("Invalid renderer") }
 }
 
-function eval_code(code) {
+export function eval_code(code) {
 	return eval(`"use strict";(${code})`);
 }
 
@@ -395,6 +395,10 @@ function group_widget(element, i, control) {
 				add_widget("vect")
 			}
 
+			if (e.key == "w" && e.ctrlKey) {
+				add_widget("wave")
+			}
+
 			if (e.key == "g" && e.ctrlKey) {
 				add_widget("group")
 			}
@@ -434,6 +438,7 @@ register_renderer("default", code_element.toString())
 register_renderer("number", number_widget.toString())
 register_renderer("block_editor", render_editor.toString())
 register_renderer("vect", vector.toString())
+register_renderer("wave", wave_tiles.toString())
 
 window.onload = () => {
 	window.onkeydown = (e) => {

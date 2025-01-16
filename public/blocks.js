@@ -1,5 +1,5 @@
 import { EditorState, syntaxHighlighting, EditorView, javascript, keymap, esLint, lintGutter, linter, Linter, Compartment, vim, Vim, syntaxTree } from "./codemirror/bundled.js"
-import { html, mem, mounted, sig, } from "./solid_monke/solid_monke.js";
+import { html, mem, mounted, sig, mut } from "./solid_monke/solid_monke.js";
 import { dracula, trigger_save } from "./script.js";
 
 import {
@@ -90,7 +90,6 @@ export function render_editor(element) {
 
 	return ({
 		render: () => {
-
 			mounted(() => {
 				let editor = make_code_mirror(code(), uid)
 				focus = () => setTimeout(() => editor.focus(), 100)
@@ -129,7 +128,6 @@ export function render_editor(element) {
 
 
 export function code_element(element) {
-
 	let code = mem(() => element?.output ? element?.output : "")
 	let uid = Math.random().toString(36).substring(7)
 	let save, focus
@@ -161,6 +159,127 @@ export function code_element(element) {
 		onediting: () => { },
 		write: (...args) => save(...args)
 	})
+}
+
+export function wave_tiles(element) {
+	let uid = Math.random().toString(36).substring(7)
+	let tiles = mut({
+		data: element.tiles ? element.tiles : [
+			{
+				src: "./tiles_vine/4.png",
+				sockets: ["101", "000", "000", "101"]
+			},
+
+			{
+				src: "./tiles_vine/5.png",
+				sockets: ["100", "001", "000", "000"]
+			},
+		]
+	})
+
+	let name = sig(element?.name || "raw_tiles_")
+	let source = sig(element.source || `
+			{
+				src: "./tiles_vine/4.png",
+				sockets: ["101", "000", "000", "101"]
+			},
+
+			{
+				src: "./tiles_vine/5.png",
+				sockets: ["100", "001", "000", "000"]
+			},
+		`)
+
+	let code = mem(() => `const ${name()} = [ ${source()} ]`)
+
+	let cursor = sig(element.cursor || 0)
+	let editor_showing = sig(element.editor_showing || true)
+
+	let cursor_next = () => cursor() < tiles.data.length - 1 ? cursor.set(cursor() + 1) : cursor.set(0)
+	let cursor_prev = () => cursor() > 0 ? cursor.set(cursor() - 1) : cursor.set(tiles.data.length - 1)
+
+
+	let editor_save, focus, editor
+
+	let toggle_editor = () => {
+		if (editor_showing()) { hide_editor() }
+
+		else { editor_showing.set(true); editor.focus() }
+
+	}
+
+	let hide_editor = () => {
+		editor.contentDOM.blur()
+		editor_showing.set(false)
+	}
+
+	let eval_tiles = () => {
+		let new_code = `(function(){
+			${code()}
+			return ${name()}
+		})()`
+
+		let tiles = eval_code(new_code)
+		console.log(tiles)
+		return tiles
+	}
+
+	// element will have an array of tile images
+	// structure
+	// {
+	// src: filename
+	// sockets: [top, right, bottom, left]
+	// }
+	//
+
+	return {
+		render: () => {
+
+			mounted(() => {
+				editor = make_code_mirror(source(), uid)
+				focus = () => editor_showing() ? setTimeout(() => editor.focus(), 100) : null
+
+				editor_save = function(el) {
+					el.focused = editor.hasFocus
+					let text = recursive_fucking_children(editor.state.doc).join("\n");
+					el.cursor = editor.state.selection.ranges[0].from
+					source.set(text)
+				}
+
+				setTimeout(() => {
+					if (element.cursor && element.focused) {
+						editor.focus()
+						editor.dispatch({ selection: { anchor: element.cursor, head: element.cursor } })
+					}
+				}, 50)
+			})
+
+			let editor_style = mem(() => `height:${editor_showing() ? "auto" : "0px"}`)
+
+
+			return html`
+				div [style=${mem(() => `width:100%;position:relative`)}]
+					img [src=${(mem(() => tiles.data[cursor()]?.src))}]
+					button [onclick=${cursor_prev}] -- prev
+					button [onclick=${cursor_next}] -- next
+
+					div
+						button [ onclick=${toggle_editor} ] -- ${mem(() => editor_showing() ? "hide" : "edit")}
+						div [ class = ${"editor-" + uid} style=${editor_style}]
+		`},
+		onfocus: () => focus(),
+		onediting: () => { },
+		write: (el) => {
+			editor_save(el)
+			tiles.data = eval_tiles()
+
+			el.source = source()
+			el.output = code();
+			el.name = name();
+			el.tiles = tiles.data
+			el.editor_showing = editor_showing()
+		}
+	}
 }
 
 
