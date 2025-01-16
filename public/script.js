@@ -1,8 +1,10 @@
 import { render, html, mem, mut, eff_on, mounted, sig, h, For, each, store, produce, when, eff, p } from "./solid_monke/solid_monke.js";
 import { batch, createStore } from "./solid_monke/mini-solid.js";
+
 import { make_code_mirror, vector, code_element, number_widget, render_editor } from "./blocks.js";
-import { EditorState, EditorView, basicSetup, javascript, keymap, esLint, lintGutter, linter, Linter, Compartment, syntaxHighlighting, HighlightStyle, t, Vim, vim } from "./codemirror/bundled.js"
 import {
+	EditorState, EditorView, basicSetup, javascript, keymap, esLint, lintGutter,
+	linter, Linter, Compartment, syntaxHighlighting, HighlightStyle, t, Vim, vim,
 	autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap,
 	searchKeymap, highlightSelectionMatches,
 	defaultKeymap, history, historyKeymap,
@@ -12,8 +14,10 @@ import {
 	defaultHighlightStyle, indentOnInput, bracketMatching,
 	foldGutter, foldKeymap, syntaxTree
 } from "./codemirror/bundled.js"
-import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";
-import { p5 } from "./p5/p5.js";
+
+// import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";
+// import { p5 } from "./p5/p5.js";
+// import { createSystem, createVirtualTypeScriptEnvironment, createDefaultMapFromCDN } from "./tsserver/tsserver.js";
 
 let [renderers, set_renderers] = createStore({})
 
@@ -37,13 +41,23 @@ let [model, set_model] = createStore(moodle, {})
 let buffer
 
 let template = {
+	// start: `
+	// 	<body></body>
+	// 	<script type="module">
+	//
+	// 	import { mem, render, mut, sig, html, eff, eff_on, h} from "./solid_monke/solid_monke.js";
+	// 	import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";
+	// 	import { p5 } from "./p5/p5.js"; import {  createSystem, ts, createDefaultMapFromCDN, createVirtualTypeScriptEnvironment } from "./tsserver/tsserver.js";
+	//
+	// 	let M = mut({})
+	// 	document.M = M
+	// 	`,
 	start: `
 		<body></body>
 		<script type="module">
+	 	import { mem, render, mut, sig, html, eff, eff_on, h} from "./solid_monke/solid_monke.js";
+	 	import { p5 } from "./p5/p5.js";
 
-		import { mem, render, mut, sig, html, eff, eff_on, h} from "./solid_monke/solid_monke.js";
-		import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";
-		import { p5 } from "./p5/p5.js";
 
 		let M = mut({})
 		document.M = M

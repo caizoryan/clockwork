@@ -1,0 +1,16 @@
+{
+  "name": "tsserver",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@typescript/vfs": "^1.6.0",
+    "typescript": "^5.7.3"
+  }
+}

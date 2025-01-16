@@ -326,7 +326,7 @@ export function vector(e) {
 				input [ type=range value=${size} oninput=${(e) => size.set(parseFloat(e.target.value))} min=0 max=500 step=1]
 				div [ class = widget style=${style} onmousemove=${onmousemove} onclick=${toggle_recording} ]
 					div [ class = widget style=${ball} onmousemove=${(e) => e.stopImmediatePropagation()} ]
-					p -- ${(() => `M.${name()}`)}`,
+					`,
 		onselect: () => { },
 		onediting: () => { },
 		write: (el) => {
