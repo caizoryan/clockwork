@@ -19,7 +19,7 @@ app.use('/*', serveStatic({ root: './public/' }))
 app.get("/api", (c) => c.json({ message: "Hello World" }));
 
 app.get("/api/file", (c) => {
-	c.json({ files: get_files() });
+	return c.json({ files: get_files() });
 })
 
 app.get("/api/file/:title", (c) => {

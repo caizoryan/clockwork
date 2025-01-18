@@ -165,7 +165,7 @@ export function wave_tiles(element) {
 	let uid = Math.random().toString(36).substring(7)
 
 	let name = sig(element?.name || "raw_tiles_")
-	let source = sig(element.source || ``)
+	let source = sig(element.source || `[]`)
 
 	let code = mem(() => `const ${name()} = ${source()}`)
 
@@ -274,16 +274,24 @@ export function wave_tiles(element) {
 
 			let editor_style = mem(() => `height:${editor_showing() ? "auto" : "0px"}`)
 
+			let set_name = (e) => {
+				name.set(e.target.value)
+			}
+
 			return html`
 				div [style=${mem(() => `width:100%`)}]
+					input [oninput=${set_name} value=${name}]
 				  .tile [style=padding:50px;position:relative;width:min-content;]
 				    span -- ${top_input}
 				    span -- ${right_input}
 				    span -- ${bottom_input}
 				    span -- ${left_input}
-						img [src=${(mem(() => current()?.src))}]
+						img [src=${(mem(() => current()?.src))} style=width:300px]
 					button [onclick=${cursor_prev}] -- prev
 					button [onclick=${cursor_next}] -- next
+					p -- Index: ${cursor}
+				  p -- const -> ${name}
+				  p -- filename: ${() => current()?.src}
 
 					div
 						button [ onclick=${toggle_editor} ] -- ${mem(() => editor_showing() ? "hide" : "edit")}
