@@ -162,11 +162,11 @@ export function code_element(element) {
 }
 
 export function wave_tiles(element) {
-	let uid = Math.random().toString(36).substring(7)
+	let editor_save, focus, editor
+	let uid = element.id
 
 	let name = sig(element?.name || "raw_tiles_")
 	let source = sig(element.source || `[]`)
-
 	let code = mem(() => `const ${name()} = ${source()}`)
 
 
@@ -176,7 +176,6 @@ export function wave_tiles(element) {
 	let cursor_next = () => cursor() < tiles.data.length - 1 ? cursor.set(cursor() + 1) : cursor.set(0)
 	let cursor_prev = () => cursor() > 0 ? cursor.set(cursor() - 1) : cursor.set(tiles.data.length - 1)
 
-	let editor_save, focus, editor
 
 	let toggle_editor = () => {
 		if (editor_showing()) { hide_editor() }
@@ -204,22 +203,15 @@ export function wave_tiles(element) {
 			? [...element.hidden]
 			: []
 	})
-	let processed_tiles = mem(() => {
-		return tiles.data.filter((el) => !tiles.hidden.includes(el.src))
-	})
+
+	let processed_tiles = mem(() => tiles.data.filter((el) => !tiles.hidden.includes(el.src)))
 
 	let toggle_tile = (src) => {
 		if (tiles.hidden.includes(src)) tiles.hidden = tiles.hidden.filter((str) => str != src)
-		else {
-			tiles.hidden.push(src)
-		}
-		console.log(processed_tiles())
+		else { tiles.hidden.push(src) }
 	}
 
-	let toggle_processed = () => {
-		console.log(processed_tiles())
-		using_processed.set(!using_processed())
-	}
+	let toggle_processed = () => using_processed.set(!using_processed())
 
 	let processed_code = mem(() => `const ${name()} = ${JSON.stringify(processed_tiles(), null, 2)}`)
 	let using_processed = sig(element.using_processed ? true : false)
@@ -260,26 +252,25 @@ export function wave_tiles(element) {
 			width: 100px;
 			display: grid;
 			grid-template-columns: 1fr 1fr;
-`
-
+			`
 		return html`
-		div
-			button [onclick=${toggle_processed}] -- ${() => using_processed() ? "Disable" : "Enable"}
-			div [style = ${style}]
-				each of ${tiles.data} as ${button}
-`
+			div
+				button [onclick=${toggle_processed}] -- ${() => using_processed() ? "Disable" : "Enable"}
+				div [style = ${style}]
+					each of ${tiles.data} as ${button}
+			`
 	};
 
 	let button = (item, i) => {
 		let enabled = mem(() => !tiles.hidden.includes(item.src))
 		let style = mem(() => `
-opacity: ${enabled() ? "1" : ".3"};
-width: 50px;
-height: 50px;
-background-image: url(${item.src});
-background-size: contain;
-`
+			opacity: ${enabled() ? "1" : ".3"};
+			width: 50px;
+			height: 50px;
+			background-image: url(${item.src});
+			background-size: contain;`
 		)
+
 		return html`button [style=${style} onclick = ${() => toggle_tile(item.src)}] -- ${i}`
 	}
 
@@ -310,7 +301,7 @@ background-size: contain;
 				}, 50)
 			})
 
-			let editor_style = mem(() => `height:${editor_showing() ? "auto" : "0px"}`)
+			let editor_style = mem(() => `height:${editor_showing() ? "auto" : "0px"};overflow:hidden;`)
 
 			let set_name = (e) => {
 				name.set(e.target.value)
