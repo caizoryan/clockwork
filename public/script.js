@@ -40,24 +40,22 @@ let moodle = (function load() {
 let [model, set_model] = createStore(moodle, {})
 let buffer
 
+let solid_imports = `import { mem, render, mut, sig, html, eff, eff_on, h} from "./solid_monke/solid_monke.js";`
+let p5_import = `import { p5 } from "./p5/p5.js";`
+
+let pdf_import = `import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";`
+let ts_import = `import {  createSystem, ts, createDefaultMapFromCDN, createVirtualTypeScriptEnvironment } from "./tsserver/tsserver.js";`
+
+
+let imports = `
+${solid_imports}
+${p5_import}
+`
 let template = {
-	// start: `
-	// 	<body></body>
-	// 	<script type="module">
-	//
-	// 	import { mem, render, mut, sig, html, eff, eff_on, h} from "./solid_monke/solid_monke.js";
-	// 	import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";
-	// 	import { p5 } from "./p5/p5.js"; import {  createSystem, ts, createDefaultMapFromCDN, createVirtualTypeScriptEnvironment } from "./tsserver/tsserver.js";
-	//
-	// 	let M = mut({})
-	// 	document.M = M
-	// 	`,
 	start: `
 		<body></body>
 		<script type="module">
-	 	import { mem, render, mut, sig, html, eff, eff_on, h} from "./solid_monke/solid_monke.js";
-	 	import { p5 } from "./p5/p5.js";
-
+		${imports}
 
 		let M = mut({})
 		document.M = M

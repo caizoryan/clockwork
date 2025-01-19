@@ -1,5 +1,5 @@
 import { EditorState, syntaxHighlighting, EditorView, javascript, keymap, esLint, lintGutter, linter, Linter, Compartment, vim, Vim, syntaxTree } from "./codemirror/bundled.js"
-import { html, mem, mounted, sig, mut } from "./solid_monke/solid_monke.js";
+import { html, mem, mounted, sig, mut, eff_on } from "./solid_monke/solid_monke.js";
 import { dracula, trigger_save } from "./script.js";
 
 import {
@@ -169,13 +169,12 @@ export function wave_tiles(element) {
 
 	let code = mem(() => `const ${name()} = ${source()}`)
 
+
 	let cursor = sig(element.cursor || 0)
 	let editor_showing = sig(element.editor_showing || true)
 
 	let cursor_next = () => cursor() < tiles.data.length - 1 ? cursor.set(cursor() + 1) : cursor.set(0)
 	let cursor_prev = () => cursor() > 0 ? cursor.set(cursor() - 1) : cursor.set(tiles.data.length - 1)
-
-
 
 	let editor_save, focus, editor
 
@@ -199,8 +198,34 @@ export function wave_tiles(element) {
 		return tiles
 	}
 
-	let tiles = mut({ data: eval_tiles() })
+	let tiles = mut({
+		data: eval_tiles(),
+		hidden: element.hidden
+			? [...element.hidden]
+			: []
+	})
+	let processed_tiles = mem(() => {
+		return tiles.data.filter((el) => !tiles.hidden.includes(el.src))
+	})
+
+	let toggle_tile = (src) => {
+		if (tiles.hidden.includes(src)) tiles.hidden = tiles.hidden.filter((str) => str != src)
+		else {
+			tiles.hidden.push(src)
+		}
+		console.log(processed_tiles())
+	}
+
+	let toggle_processed = () => {
+		console.log(processed_tiles())
+		using_processed.set(!using_processed())
+	}
+
+	let processed_code = mem(() => `const ${name()} = ${JSON.stringify(processed_tiles(), null, 2)}`)
+	let using_processed = sig(element.using_processed ? true : false)
+
 	let current = mem(() => tiles.data[cursor()])
+
 	const set_socket = (num, value) => {
 		tiles.data[cursor()].sockets[num] = value
 	}
@@ -218,37 +243,50 @@ export function wave_tiles(element) {
 		let el
 		let value = mem(() => tiles.data[cursor()]?.sockets[index])
 		let keydown = (e) => {
-			if (e.key == "Enter") {
-				console.log("whore", el.value)
-
-				set_socket(index, el.value.trim())
-
-				console.log("whore", tiles.data[cursor()].sockets[index])
-
-				setTimeout(() => {
-					console.log("whoring")
-					editor.dispatch({
-						changes: { from: 0, to: editor.state.doc.length, insert: JSON.stringify(tiles.data, null, 2) }
-					})
-				}, 50)
-			}
+			set_socket(index, el.value.trim())
+			setTimeout(() => {
+				editor.dispatch({
+					changes: { from: 0, to: editor.state.doc.length, insert: JSON.stringify(tiles.data, null, 2) }
+				})
+			}, 50)
 		}
 
 		return html`input [onkeydown=${keydown} value=${value} ref=${(a) => el = a} style=${style}]`
+	}
+
+
+	let buttons = () => {
+		let style = `
+			width: 100px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+`
+
+		return html`
+		div
+			button [onclick=${toggle_processed}] -- ${() => using_processed() ? "Disable" : "Enable"}
+			div [style = ${style}]
+				each of ${tiles.data} as ${button}
+`
+	};
+
+	let button = (item, i) => {
+		let enabled = mem(() => !tiles.hidden.includes(item.src))
+		let style = mem(() => `
+opacity: ${enabled() ? "1" : ".3"};
+width: 50px;
+height: 50px;
+background-image: url(${item.src});
+background-size: contain;
+`
+		)
+		return html`button [style=${style} onclick = ${() => toggle_tile(item.src)}] -- ${i}`
 	}
 
 	let top_input = () => input(45, 0, 0)
 	let right_input = () => input(95, 45, 1)
 	let bottom_input = () => input(45, 95, 2)
 	let left_input = () => input(0, 45, 3)
-
-	// element will have an array of tile images
-	// structure
-	// {
-	// src: filename
-	// sockets: [top, right, bottom, left]
-	// }
-	//
 
 	return {
 		render: () => {
@@ -292,6 +330,7 @@ export function wave_tiles(element) {
 					p -- Index: ${cursor}
 				  p -- const -> ${name}
 				  p -- filename: ${() => current()?.src}
+					div -- ${buttons} 
 
 					div
 						button [ onclick=${toggle_editor} ] -- ${mem(() => editor_showing() ? "hide" : "edit")}
@@ -303,8 +342,10 @@ export function wave_tiles(element) {
 			editor_save(el)
 			tiles.data = eval_tiles()
 
+			el.using_processed = using_processed()
+			el.hidden = [...tiles.hidden]
 			el.source = source()
-			el.output = code();
+			el.output = using_processed() ? processed_code() : code();
 			el.name = name();
 			el.editor_showing = editor_showing()
 		}
