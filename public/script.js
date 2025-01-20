@@ -745,7 +745,7 @@ const createTheme = ({ variant, settings, styles }) => {
 };
 
 // Author: Zeno Rocha
-export const dracula = createTheme({
+export const dracula_ = createTheme({
 	variant: 'light',
 	settings: {
 		background: '#f9f9f911',
@@ -787,6 +787,84 @@ export const dracula = createTheme({
 		{
 			tag: [t.keyword, t.special(t.brace)],
 			color: '#fa8d3e',
+		},
+		{
+			tag: t.operator,
+			color: '#ed9366',
+		},
+		{
+			tag: t.separator,
+			color: '#5c6166b3',
+		},
+		{
+			tag: t.punctuation,
+			color: '#5c6166',
+		},
+		{
+			tag: [t.definition(t.propertyName), t.function(t.variableName)],
+			color: '#f2ae49',
+		},
+		{
+			tag: [t.className, t.definition(t.typeName)],
+			color: '#22a4e6',
+		},
+		{
+			tag: [t.tagName, t.typeName, t.self, t.labelName],
+			color: '#55b4d4',
+		},
+		{
+			tag: t.angleBracket,
+			color: '#55b4d480',
+		},
+		{
+			tag: t.attributeName,
+			color: '#f2ae49',
+		},
+	],
+});
+
+export const dracula = createTheme({
+	variant: 'light',
+	settings: {
+		background: '#215CBB',
+		foreground: '#5c6166',
+		caret: '#ffaa33',
+		selection: '#036dd626',
+		gutterBackground: '#fcfcfc',
+		gutterForeground: '#8a919966',
+		lineHighlight: '#8a91991a',
+	},
+	styles: [
+		{
+			tag: t.comment,
+			color: "black",
+			padding: "2px",
+			borderRadius: "8px",
+			background: "#ffd2ed",
+		},
+		{
+			tag: t.string,
+			color: '#86b300',
+		},
+		{
+			tag: t.regexp,
+			color: '#4cbf99',
+		},
+		{
+			tag: [t.number, t.bool, t.null],
+			color: '#ffaa33',
+		},
+		{
+			tag: t.variableName,
+			color: '#EEED95',
+		},
+		{
+			tag: [t.definitionKeyword, t.modifier],
+			color: '#EEED95',
+		},
+		{
+			tag: [t.keyword, t.special(t.brace)],
+			color: '#EEED95',
 		},
 		{
 			tag: t.operator,
