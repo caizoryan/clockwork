@@ -1,5 +1,5 @@
 import { EditorView, basicSetup } from "codemirror";
-import { keymap } from "@codemirror/view";
+import { keymap, ViewUpdate, ViewPlugin, WidgetType, Decoration } from "@codemirror/view";
 import { EditorState, Compartment } from "@codemirror/state";
 import { Vim, vim } from "@replit/codemirror-vim";
 import { markdown } from "@codemirror/lang-markdown";
@@ -105,4 +105,5 @@ export {
   t,
   syntaxTree,
   HighlightStyle, syntaxHighlighting,
+  ViewUpdate, ViewPlugin, WidgetType, Decoration
 };

@@ -65814,11 +65814,15 @@ var md_highlight = syntaxHighlighting(
 );
 export {
   Compartment,
+  Decoration,
   EditorState,
   EditorView,
   HighlightStyle,
   eslint4b_es_default as Linter,
+  ViewPlugin,
+  ViewUpdate,
   Vim,
+  WidgetType,
   autocompletion,
   basicSetup,
   bracketMatching,
