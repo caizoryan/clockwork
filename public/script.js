@@ -827,7 +827,7 @@ export const dracula = createTheme({
 	variant: 'light',
 	settings: {
 		background: '#215CBB',
-		foreground: '#5c6166',
+		foreground: '#fefefe',
 		caret: '#ffaa33',
 		selection: '#036dd626',
 		gutterBackground: '#fcfcfc',
@@ -837,10 +837,10 @@ export const dracula = createTheme({
 	styles: [
 		{
 			tag: t.comment,
-			color: "black",
+			color: "#666",
 			padding: "2px",
 			borderRadius: "8px",
-			background: "#ffd2ed",
+			background: "#ccc",
 		},
 		{
 			tag: t.string,
@@ -852,11 +852,15 @@ export const dracula = createTheme({
 		},
 		{
 			tag: [t.number, t.bool, t.null],
-			color: '#ffaa33',
+			color: '#F66BAC',
 		},
 		{
 			tag: t.variableName,
-			color: '#EEED95',
+			// padding: "2px",
+			// borderRadius: "8px",
+			// background: "#EEED95",
+			color: "#EEED95",
+			// color: 'black',
 		},
 		{
 			tag: [t.definitionKeyword, t.modifier],
@@ -868,7 +872,7 @@ export const dracula = createTheme({
 		},
 		{
 			tag: t.operator,
-			color: '#ed9366',
+			color: '#F66BAC',
 		},
 		{
 			tag: t.separator,
@@ -876,15 +880,24 @@ export const dracula = createTheme({
 		},
 		{
 			tag: t.punctuation,
-			color: '#5c6166',
+			// padding: "1px",
+			// borderRadius: "8px",
+			// background: "#EEED95",
+			color: "#EEED95",
+			boxShadow: "0 0 2px 1px #EEED9566",
+			margin: "0 5px",
+			// color: 'black',
 		},
 		{
 			tag: [t.definition(t.propertyName), t.function(t.variableName)],
-			color: '#f2ae49',
+			color: 'yellow',
+			padding: "2px",
+			border: '1px yellow dotted',
+			borderRadius: "8px",
 		},
 		{
 			tag: [t.className, t.definition(t.typeName)],
-			color: '#22a4e6',
+			color: '#F66BAC',
 		},
 		{
 			tag: [t.tagName, t.typeName, t.self, t.labelName],
@@ -896,7 +909,7 @@ export const dracula = createTheme({
 		},
 		{
 			tag: t.attributeName,
-			color: '#f2ae49',
+			color: '#F66BAC',
 		},
 	],
 });

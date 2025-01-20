@@ -219,21 +219,68 @@ export function wave_tiles(element) {
 	let current = mem(() => tiles.data[cursor()])
 
 	const set_socket = (num, value) => {
-		tiles.data[cursor()].sockets[num] = value
+		if (tiles.data[cursor()])
+			tiles.data[cursor()].sockets[num] = value
 	}
 
-	let input = (x, y, index) => {
+
+	let input = (x, y, angle, index) => {
 		let style = `
 			position: absolute;
-			border: 1px solid black;
-			width: 50px;
+			width: 100%;
+			background: none;
+			color: inherit;
+			border: none;
+			border-bottom: 1px solid white;
 			height: 25px;
 			top: ${y}%;
 			left: ${x}%;
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			transform: rotate(${angle}deg);
 		`
 
 		let el
 		let value = mem(() => tiles.data[cursor()]?.sockets[index])
+		let letters = ["a", "b", "c", "d"]
+
+		let buttons = mem(() => {
+			if (value()) {
+				return value().split("").map((el, i) => atom_button(el, letters[i]))
+			}
+			else[]
+		}
+		)
+
+		let processed_value = mem(() => {
+			let ret = buttons()?.map((el) => {
+				if (el.value && typeof el.value == "function") {
+					let val = el.value()
+					console.log(val)
+
+					if (val)
+						return (el.value() ? "1" : "0")
+					else return "0"
+				}
+
+				else {
+					return "0"
+
+				}
+			}).join("")
+
+			return ret
+		})
+
+		eff_on(processed_value, () => {
+			set_socket(index, processed_value())
+			setTimeout(() => {
+				editor.dispatch({
+					changes: { from: 0, to: editor.state.doc.length, insert: JSON.stringify(tiles.data, null, 2) }
+				})
+			}, 50)
+		})
+
 		let keydown = (e) => {
 			set_socket(index, el.value.trim())
 			setTimeout(() => {
@@ -243,7 +290,30 @@ export function wave_tiles(element) {
 			}, 50)
 		}
 
-		return html`input [onkeydown=${keydown} value=${value} ref=${(a) => el = a} style=${style}]`
+		return html`
+			div [style=${style}]
+				each of ${buttons} as ${(el) => el.button}
+			`
+
+		// return html`input [onkeydown=${keydown} value=${value} ref=${(a) => el = a} style=${style}]`
+	}
+
+	let atom_button = (value, label) => {
+		if ("string" == typeof value) value = value == "1" ? true : false
+
+		let on = sig(value || false)
+		let style = mem(() => on() ? "opacity: 1;background: yellow;color:black; " : "opacity: .5;")
+
+
+		let toggle_on = () => {
+			console.log("buitch")
+			on.set(!on())
+		}
+
+		let button = () => html`button [onclick=${toggle_on} style=${style}] -- ${label}`
+		return {
+			button, value: on
+		}
 	}
 
 
@@ -251,8 +321,11 @@ export function wave_tiles(element) {
 		let style = `
 			width: 100px;
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			padding: 1px;
+			grid-template-columns: 1fr 1fr 1fr;
+
 			`
+
 		return html`
 			div
 				button [onclick=${toggle_processed}] -- ${() => using_processed() ? "Disable" : "Enable"}
@@ -265,6 +338,7 @@ export function wave_tiles(element) {
 		let enabled = mem(() => !tiles.hidden.includes(item.src))
 		let style = mem(() => `
 			opacity: ${enabled() ? "1" : ".3"};
+
 			width: 50px;
 			height: 50px;
 			background-image: url(${item.src});
@@ -274,10 +348,10 @@ export function wave_tiles(element) {
 		return html`button [style=${style} onclick = ${() => toggle_tile(item.src)}] -- ${i}`
 	}
 
-	let top_input = () => input(45, 0, 0)
-	let right_input = () => input(95, 45, 1)
-	let bottom_input = () => input(45, 95, 2)
-	let left_input = () => input(0, 45, 3)
+	let top_input = () => input(0, 0, 0, 0)
+	let right_input = () => input(50, 50, 90, 1)
+	let bottom_input = () => input(0, 100, 180, 2)
+	let left_input = () => input(-50, 50, 270, 3)
 
 	return {
 		render: () => {
@@ -307,26 +381,61 @@ export function wave_tiles(element) {
 				name.set(e.target.value)
 			}
 
+
+			let style = `
+				.container-div {
+					width: 100%;
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					grid-gap: 10px;
+					padding: 5px
+
+				}
+
+				button {
+					background: none;
+					color: inherit;
+					border: none;
+					margin: 0 5px;
+				}
+
+				input {
+					background: none;
+					color: inherit;
+					border: none;
+					border-bottom: 1px solid white;
+					height: 25px;
+				}
+			`
+
 			return html`
-				div [style=${mem(() => `width:100%`)}]
-					input [oninput=${set_name} value=${name}]
-				  .tile [style=padding:50px;position:relative;width:min-content;]
-				    span -- ${top_input}
-				    span -- ${right_input}
-				    span -- ${bottom_input}
-				    span -- ${left_input}
-						img [src=${(mem(() => current()?.src))} style=width:300px]
-					button [onclick=${cursor_prev}] -- prev
-					button [onclick=${cursor_next}] -- next
-					p -- Index: ${cursor}
-				  p -- const -> ${name}
-				  p -- filename: ${() => current()?.src}
-					div -- ${buttons} 
+			style -- ${style}
+			div
+					.container-div
+						div
+							.tile [style=padding:50px;position:relative;width:min-content;]
+								span -- ${top_input}
+								span -- ${right_input}
+								span -- ${bottom_input}
+								span -- ${left_input}
+								img [src=${(mem(() => current()?.src))} style=width:300px]
+
+						div [style=padding:10px]
+							button [onclick=${cursor_prev}] -- prev
+							span -- (${cursor})
+							button [onclick=${cursor_next}] -- next
+
+							p  
+								span -- const ->
+								input [oninput=${set_name} value=${name}]
+								span -- ${name}
+							p -- filename: ${() => current()?.src}
+							div -- ${buttons} 
 
 					div
 						button [ onclick=${toggle_editor} ] -- ${mem(() => editor_showing() ? "hide" : "edit")}
 						div [ class = ${"editor-" + uid} style=${editor_style}]
-		`},
+			`},
 		onfocus: () => focus(),
 		onediting: () => { },
 		write: (el) => {
