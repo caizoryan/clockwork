@@ -144,7 +144,6 @@ let app = () => {
 
 	return h("div.container", [
 		// TODO: below is not reactive, have to wrap in a reactive context.. () => 
-
 		h("div.editor", { style: editor_style }, init_editor(model.blocks)),
 		h("iframe", { style: frame_style, srcdoc: compiled, width: "98%", height: "98%" })
 	])

@@ -173,7 +173,7 @@ export function wave_tiles(element) {
 
 
 	let cursor = sig(element.index || 0)
-	let editor_showing = sig(element.editor_showing || true)
+	let editor_showing = sig(element.editor_showing || false)
 
 	let cursor_next = () => cursor() < tiles.data.length - 1 ? cursor.set(cursor() + 1) : cursor.set(0)
 	let cursor_prev = () => cursor() > 0 ? cursor.set(cursor() - 1) : cursor.set(tiles.data.length - 1)
@@ -283,21 +283,11 @@ export function wave_tiles(element) {
 			}, 50)
 		})
 
-		let keydown = (e) => {
-			set_socket(index, el.value.trim())
-			setTimeout(() => {
-				editor.dispatch({
-					changes: { from: 0, to: editor.state.doc.length, insert: JSON.stringify(tiles.data, null, 2) }
-				})
-			}, 50)
-		}
 
 		return html`
 			div [style=${style}]
 				each of ${buttons} as ${(el) => el.button}
 			`
-
-		// return html`input [onkeydown=${keydown} value=${value} ref=${(a) => el = a} style=${style}]`
 	}
 
 	let atom_button = (value, label) => {
@@ -307,10 +297,7 @@ export function wave_tiles(element) {
 		let style = mem(() => on() ? "opacity: 1;background: yellow;color:black; " : "opacity: .5;")
 
 
-		let toggle_on = () => {
-			console.log("buitch")
-			on.set(!on())
-		}
+		let toggle_on = () => on.set(!on())
 
 		let button = () => html`button [onclick=${toggle_on} style=${style}] -- ${label}`
 		return {
@@ -340,8 +327,8 @@ export function wave_tiles(element) {
 		let enabled = mem(() => !tiles.hidden.includes(item.src))
 		let style = mem(() => `
 			opacity: ${enabled() ? "1" : ".3"};
-
 			width: 50px;
+			border: ${cursor() === i() ? "5px solid yellow" : "none"};
 			height: 50px;
 			background-image: url(${item.src});
 			background-size: contain;`
@@ -360,7 +347,8 @@ export function wave_tiles(element) {
 
 			mounted(() => {
 				editor = make_code_mirror(source(), uid)
-				focus = () => editor_showing() ? setTimeout(() => editor.focus(), 100) : null
+				// focus = () => editor_showing() ? setTimeout(() => editor.focus(), 100) : null
+				focus = () => console.log('focus disabled')
 
 				editor_save = function(el) {
 					el.focused = editor.hasFocus
@@ -438,8 +426,12 @@ export function wave_tiles(element) {
 						button [ onclick=${toggle_editor} ] -- ${mem(() => editor_showing() ? "hide" : "edit")}
 						div [ class = ${"editor-" + uid} style=${editor_style}]
 			`},
-		onfocus: () => focus(),
+		// onfocus: () => focus(),
 		onediting: () => { },
+		onkeydown: (e) => {
+			if (e.key == "ArrowLeft") cursor_prev()
+			if (e.key == "ArrowRight") cursor_next()
+		},
 		write: (el) => {
 			editor_save(el)
 			tiles.data = eval_tiles()
