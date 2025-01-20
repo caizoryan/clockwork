@@ -17,6 +17,7 @@ let basicSetup = (() => [
 	highlightSpecialChars(),
 	highlightActiveLine(),
 	history(),
+	bracketMatching(),
 	indentOnInput(),
 	drawSelection(),
 	closeBrackets(),
@@ -24,6 +25,7 @@ let basicSetup = (() => [
 	keymap.of([
 		...defaultKeymap,
 		...historyKeymap,
+		...foldKeymap,
 	])
 ])()
 
@@ -170,7 +172,7 @@ export function wave_tiles(element) {
 	let code = mem(() => `const ${name()} = ${source()}`)
 
 
-	let cursor = sig(element.cursor || 0)
+	let cursor = sig(element.index || 0)
 	let editor_showing = sig(element.editor_showing || true)
 
 	let cursor_next = () => cursor() < tiles.data.length - 1 ? cursor.set(cursor() + 1) : cursor.set(0)
@@ -227,7 +229,7 @@ export function wave_tiles(element) {
 	let input = (x, y, angle, index) => {
 		let style = `
 			position: absolute;
-			width: 100%;
+			width: 90%;
 			background: none;
 			color: inherit;
 			border: none;
@@ -350,8 +352,8 @@ export function wave_tiles(element) {
 
 	let top_input = () => input(0, 0, 0, 0)
 	let right_input = () => input(50, 50, 90, 1)
-	let bottom_input = () => input(0, 100, 180, 2)
-	let left_input = () => input(-50, 50, 270, 3)
+	let bottom_input = () => input(0, 90, 180, 2)
+	let left_input = () => input(-40, 50, 270, 3)
 
 	return {
 		render: () => {
@@ -446,6 +448,7 @@ export function wave_tiles(element) {
 			el.hidden = [...tiles.hidden]
 			el.source = source()
 			el.output = using_processed() ? processed_code() : code();
+			el.index = cursor()
 			el.name = name();
 			el.editor_showing = editor_showing()
 		}
