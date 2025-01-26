@@ -18,6 +18,7 @@ import {
 // import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";
 // import { p5 } from "./p5/p5.js";
 // import { createSystem, createVirtualTypeScriptEnvironment, createDefaultMapFromCDN } from "./tsserver/tsserver.js";
+// import { p5, p5sound } from "./p5/_bundled.js"
 
 let [renderers, set_renderers] = createStore({})
 
@@ -41,7 +42,7 @@ let [model, set_model] = createStore(moodle, {})
 let buffer
 
 let solid_imports = `import { mem, render, mut, sig, html, eff, eff_on, h} from "./solid_monke/solid_monke.js";`
-let p5_import = `import { p5 } from "./p5/p5.js";`
+let p5_import = ` import { p5 } from "./p5/p5.js" `
 
 let pdf_import = `import { jsPDF, pdfjsLib } from "./jsPdf/jspdf.js";`
 let ts_import = `import {  createSystem, ts, createDefaultMapFromCDN, createVirtualTypeScriptEnvironment } from "./tsserver/tsserver.js";`
